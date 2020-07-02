@@ -1,0 +1,57 @@
+%include "asm_io.inc"
+;
+segment .data;
+prompt1 db    "Enter a number: ", 0
+prompt2 db    "Die Zahl ist durch 3 teilbar: ", 0
+prompt3 db    "Die Zahl ist durch 3 nicht teilbar ", 0
+
+segment .bss
+;
+
+segment .text
+        global  asm_main
+asm_main:
+        enter   0,0               ; setup routine
+        pusha
+
+        mov     eax, prompt1      ; print out prompt
+        call    print_string
+        call    read_int          ; read integer
+
+        push eax
+        call berechnung
+        add esp , 4;
+        
+        cmp eax , 0;
+        je richtig ;
+        mov eax , prompt3;
+        call print_string;
+        jmp fertig;  
+          
+richtig :
+        mov eax ,prompt2;
+        call print_string;
+       
+fertig: 
+        call print_nl
+       
+        popa
+        mov     eax, 0            ; return back to C
+        leave                     
+        ret
+
+
+berechnung:
+    enter 4,0
+    pusha
+
+        mov eax, [ebp+8]
+        mov ebx ,3;
+        mov edx , 0;
+        div ebx;
+
+    mov [ebp-4], edx
+    popa
+    mov eax , [ebp-4]
+    leave
+    ret

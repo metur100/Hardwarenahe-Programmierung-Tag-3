@@ -1,0 +1,32 @@
+%include "asm_io.inc"
+;
+segment .data;
+
+segment .bss;
+
+segment .text
+        global  asm_main
+asm_main:
+        enter   0,0               ; setup routine
+        pusha
+
+        mov ecx, 20
+loop_eingabe:
+        call read_char
+        push eax
+loop loop_eingabe
+        
+        mov ecx,10
+
+loop_ausgabe:
+        pop eax
+        pop eax
+        call print_char
+loop loop_ausgabe
+
+        call print_nl
+       
+        popa
+        mov     eax, 0            ; return back to C
+        leave                     
+        ret

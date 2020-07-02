@@ -1,0 +1,35 @@
+%include "asm_io.inc"
+;
+segment .data;
+
+segment .bss
+
+
+segment .text
+        global  asm_main
+asm_main:
+        enter   0,0               ; setup routine
+        pusha
+        dump_stack 0,10,0
+
+        push dword 0xDEADBEEF
+        dump_stack 1,10,0
+        push dword 0xCAFEAFFE
+        dump_stack 1,14,0
+
+        pop eax
+        dump_regs 1
+        dump_stack 2,10,10
+    
+        pop ebx
+        dump_regs 2
+        dump_stack 4,10,10
+
+
+        call print_nl
+       
+        popa
+        mov     eax, 0            ; return back to C
+        leave                     
+        ret
+

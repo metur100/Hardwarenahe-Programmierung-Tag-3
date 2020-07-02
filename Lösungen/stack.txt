@@ -1,0 +1,144 @@
+Vor Prolog:
+
+0x2000           .                     <- EBP
+                 .
+                 . 
+       +---------------------------+
+0x1000 | Rücksprungadresse (zu C)  |   <- aktueller ESP
+       +---------------------------+
+
+##################################################################
+
+nach Zeile 20 (enter 0,0):
+
+0x2000           .                     
+                 .
+                 . 
+       +---------------------------+
+0x1000 | Rücksprungadresse (zu C)  |  
+       +---------------------------+
+0x???? | ... (hier weiter!)        |
+       +---------------------------+
+
+
+##################################################################
+
+0x1000   Rücksprungadresse (zu C)  <- esp
+
+enter 0,0
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    alter ebp                 <- aktulle ebp, esp
+
+pusha
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- aktulle ebp
+0xFE4    gesicherte Register       <- aktulle esp
+
+push eax
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- aktulle ebp
+0xFE4    gesicherte Register       <- 
+0xFE0    push eax                  <- aktulle esp
+
+call berechnung
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- aktulle ebp
+0xFE4    gesicherte Register       <-    
+0xFE0    push eax                  <- 
+0xFDC    Ret (zu asm.main)         <- aktulle esp
+
+Stack in Funktion berechnung
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- aktulle ebp
+0xFE4    gesicherte Register       <-   
+0xFE0    push eax                  <- 
+0xFDC    Ret (zu asm.main)         <- aktulle esp
+
+enter 4,0
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- 
+0xFE4    gesicherte Register       <-    
+0xFE0    push eax                  <- 
+0xFDC    Ret (zu asm.main)         <- 
+0xFD8    push ebp                  <- 
+0xFD8    mov ebp,esp               <- aktulle ebp
+0xFD4    lokale Variable           <- aktulle esp
+
+pusha in berechnung:
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- 
+0xFE4    gesicherte Register       <-                 
+0xFE0    push eax                  <- 
+0xFDC    Ret (zu asm.main)         <- 
+0xFD8    push ebp                  <- 
+0xFD8    mov ebp,esp               <- aktulle ebp
+0xFD4    lokale Variable           <- 
+0xFBC    gesicherte Register       <- aktulle esp
+
+popa in berechnung
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- 
+0xFE4    gesicherte Register       <-                 
+0xFE0    push eax                  <- 
+0xFDC    Ret (zu asm.main)         <- 
+0xFD8    push ebp                  <- 
+0xFD8    mov ebp,esp               <- aktulle ebp
+0xFD4    lokale Variable           <- aktulle esp
+
+leave : mov esp ,ebp
+
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- 
+0xFE4    gesicherte Register       <-                 
+0xFE0    push eax                  <- 
+0xFDC    Ret (zu asm.main)         <- 
+0xFD8    push ebp                  <- 
+0xFD8    mov ebp,esp               <- aktulle ebp
+0xFD8    ebp                       <- aktulle esp
+
+leave : pop ebp
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- aktulle ebp
+0xFE4    gesicherte Register       <-                 
+0xFE0    push eax                  <- 
+0xFDC    Ret (zu asm.main)         <- aktulle esp
+
+
+ret
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- aktulle ebp
+0xFE4    gesicherte Register       <-                 
+0xFE0    push eax                  <- esp
+
+
+asm_main : add esp , 4
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- 
+0xFFC    mov ebp,esp               <- aktulle ebp
+0xFE4    gesicherte Register       <- aktulle esp                
+
+asm_main : popa
+0x1000   Rücksprungadresse (zu C)  <- 
+0xFFC    push ebp                  <- aktulle esp
+0xFFC    mov ebp,esp               <- aktulle ebp    
+
+asm_main : leave
+0x2000                              <-ebp
+0x1000   Rücksprungadresse (zu C)  <- esp
+
+asm_main : ret
+
+
+
+    
+
